@@ -6,6 +6,7 @@ import (
 	"backup_exporter/prommetrics"
 	"log"
 	"net/http"
+	"path/filepath"
 	"sync"
 	"fmt"
 )
@@ -30,9 +31,18 @@ func RunExporter(res http.ResponseWriter, req *http.Request) {
 		}
 		for _, bkAddress := range configuration.DailyBackups {
 
-			pathName, size, date := checkfiles.Run(bkAddress)
-			writeM(prommetrics.Generate(sizeMetricName, metricPrefix,pathName, size))
-			writeM(prommetrics.Generate(dateMetricName, metricPrefix,pathName, date))
+			files, err := filepath.Glob(bkAddress)
+			if err != nil {
+				fmt.Println("Error:", err)
+				return
+			}
+			
+			for _, fileBackup := range files {
+				pathName, size, date := checkfiles.Run(fileBackup)
+				writeM(prommetrics.Generate(sizeMetricName, metricPrefix,pathName, size))
+				writeM(prommetrics.Generate(dateMetricName, metricPrefix,pathName, date))
+
+			}
 
 			wg.Done()
 		}
