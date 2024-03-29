@@ -15,7 +15,7 @@ Server:
   Port: 18083
 DailyBackups:
   - "/home/ubuntu/backup/db/backend-db.sql"
-  - "/home/ubuntu/tar/backup.tar"
+  - "/home/ubuntu/tar/*.tar"
   - "/home/ubuntu/backup/constant.json"
 ```
 
